@@ -1,9 +1,11 @@
 class CustomerService {
 
-    getLatestCustomer() {
-        return {
+    async getLatestCustomer() {
+
+        let result = 
+        {
             "id": 1,
-            "firstName": "Ted",
+            "firstName": "XERRORTed",
             "lastName": "James",
             "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
             "gender": "male",
@@ -20,6 +22,22 @@ class CustomerService {
             "latitude": 33.299,
             "longitude": -111.963
         };
+
+        const url = `${process.env.CrmUrl}:${process.env.CrmPort}/api/customers/1`;
+        const response = await fetch(url, {
+            method: "GET",
+            headers: { Accept: "application/json" }
+        })
+
+        console.log (`Received customers with status code ${response.status}`);
+
+        if (response.status === 200) {
+            const json = await response.json();
+            result = json;
+        }
+        
+
+        return result;
     }
 }
 

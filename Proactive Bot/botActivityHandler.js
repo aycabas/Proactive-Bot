@@ -60,7 +60,7 @@ class BotActivityHandler extends TeamsActivityHandler {
                 case 'customer':
                 case 'customers':
                     const customerService = new CustomerService();
-                    const customer = customerService.getLatestCustomer();
+                    const customer = await customerService.getLatestCustomer();
 
                     const customerCard = require('./cards/customerCard');
                     const card = customerCard.getCard(customer);

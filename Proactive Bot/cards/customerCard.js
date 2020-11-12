@@ -11,18 +11,18 @@ exports.getCard = function (customer) {
             {
                 "type": "ColumnSet",
                 "columns": [
-                    {
-                        "type": "Column",
-                        "items": [
-                            {
-                                "type": "Image",
-                                "style": "Person",
-                                "url": "${profileImage}",
-                                "size": "Small"
-                            }
-                        ],
-                        "width": "auto"
-                    },
+                    // {
+                    //     "type": "Column",
+                    //     "items": [
+                    //         {
+                    //             "type": "Image",
+                    //             "style": "Person",
+                    //             "url": "#",
+                    //             "size": "Small"
+                    //         }
+                    //     ],
+                    //     "width": "auto"
+                    // },
                     {
                         "type": "Column",
                         "items": [
@@ -89,26 +89,7 @@ exports.getCard = function (customer) {
     // Expand the template with your `$root` data object.
     // This binds it to the data and produces the final Adaptive Card payload
     var ManagerCardLoad = template.expand({
-        $root: {
-            "id": 1,
-            "firstName": "Ted",
-            "lastName": "James",
-            "profileImage": "https://pbs.twimg.com/profile_images/3647943215/d7f12830b3c17a5a9e4afcc370e3a37e_400x400.jpeg",
-            "gender": "male",
-            "address": "1234 Anywhere St.",
-            "city": " Phoenix ",
-            "state": {
-                "abbreviation": "AZ",
-                "name": "Arizona"
-            },
-            "orders": [
-                { "productName": "Basketball", "itemCost": 7.99 },
-                { "productName": "Shoes", "itemCost": 199.99 }
-            ],
-            "latitude": 33.299,
-            "longitude": -111.963
-        }
-
+        $root: customer
     });
     var adaptiveCard = new AdaptiveCards.AdaptiveCard();
     adaptiveCard.parse(ManagerCardLoad);
