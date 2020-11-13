@@ -9,13 +9,14 @@ const {
     CardFactory,
     ActionTypes
 } = require('botbuilder');
+const { CustomerService } = require('./services/customers');
 
 const WELCOMED_USER = 'welcomedUserProperty';
 
 class BotActivityHandler extends TeamsActivityHandler {
-    constructor( userState, conversationReferences) {
+    constructor(userState, conversationReferences) {
         super();
-        
+
         this.welcomedUserProperty = userState.createProperty(WELCOMED_USER);
         this.userState = userState;
         this.conversationReferences = conversationReferences;
@@ -27,11 +28,11 @@ class BotActivityHandler extends TeamsActivityHandler {
         });
 
         this.onMembersAdded(async (context, next) => {
-            
+
             const membersAdded = context.activity.membersAdded;
             for (let cnt = 0; cnt < membersAdded.length; cnt++) {
                 if (membersAdded[cnt].id !== context.activity.recipient.id) {
-                   
+
                     await this.sendIntroCard(context);
                 }
             }
@@ -40,37 +41,44 @@ class BotActivityHandler extends TeamsActivityHandler {
         });
 
         this.onMessage(async (context, next) => {
-            
+
             const didBotWelcomedUser = await this.welcomedUserProperty.get(context, false);
-         
+
             const userName = context.activity.from.name;
             if (didBotWelcomedUser === false) {
-                
-                
-                await context.sendActivity(`Hi ${ userName }.`);
-
-                
+                await context.sendActivity(`Hi ${userName}.`);
                 await this.welcomedUserProperty.set(context, true);
-            } else {
-                
-                const text = context.activity.text.toLowerCase();
-                switch (text) {
+            }
+
+            const text = context.activity.text.toLowerCase();
+            switch (text) {
                 case 'hello':
                 case 'hi':
-                    await context.sendActivity(`Hi ${ userName }. You don't have any new notifications.`);
+                    await context.sendActivity(`Hi ${userName}. You don't have any new notifications.`);
+                    break;
+                case 'cust':
+                case 'customer':
+                case 'customers':
+                    const customerService = new CustomerService();
+                    const customer = await customerService.getLatestCustomer();
+
+                    const customerCard = require('./cards/customerCard');
+                    const card = customerCard.getCard(customer);
+
+                    await context.sendActivity({ attachments: [CardFactory.adaptiveCard(card)] });
                     break;
                 case 'intro':
                 case 'help':
                     await this.sendIntroCard(context);
                     break;
                 default:
-                    await context.sendActivity(`You said "${ context.activity.text }"`);        
-            }}
+                    await context.sendActivity(`You said "${context.activity.text}"`);
+            }
             await next();
         });
-      
-       
-        
+
+
+
     }
     addConversationReference(activity) {
         const conversationReference = TurnContext.getConversationReference(activity);
@@ -109,7 +117,7 @@ class BotActivityHandler extends TeamsActivityHandler {
 
         await context.sendActivity({ attachments: [card] });
     }
-   
+
 }
 
 
